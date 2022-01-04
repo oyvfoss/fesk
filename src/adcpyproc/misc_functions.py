@@ -5,12 +5,11 @@
 Various functions that are not specific to the classes defined in
 adcpyproc:
 
-- Find magnetic declination
+- Find magnetic declination from lon/lat/time using geomag.
 - Convert mpl time to matlab time
 '''
 import numpy as np
 import datetime as dt
-import pkgutil
 
 try:
     import geomag
@@ -77,6 +76,7 @@ def declination(dlat, dlon, time, h=0, model=None, explicit=True):
 
     if explicit:
         print('Using %s to compute declination..' % model)
+        
     wmm_filename='%s%s.COF'% (cofdir, model)
 
     __singleton__ = geomag.geomag.GeoMag(wmm_filename=wmm_filename)

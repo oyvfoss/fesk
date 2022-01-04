@@ -6,7 +6,8 @@ with open('README.rst', 'r') as f_readme:
 setup(
     name='adcpyproc',
     version='0.0.1',
-    description='Basic post-processing of ADCP files with python',
+    description=('Post-processing and basic analysis of ocean ADCP'
+                 ' data using python.'),
     py_modules=['rdi_adcp', 'rdi_toolbox', 'variables_dictionary',
                 'internal_functions'],
     package_dir={'':'src'},

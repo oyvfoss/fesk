@@ -45,6 +45,8 @@ Documentation
 Needs a proper documentation. Function docstrings are pretty decent, and rdi_adcp.example()
 should be ok -> can use these as a starting point.
 
+Should probably make a walkthough tutorial - probably in the form of a static notebook. 
+
 Update dependencies (do standard libraries go in setup.py?) - pkgutils etc
 
 Maybe look into sphinx documentation? I think there must be some way of automatic doc generation.
@@ -79,3 +81,6 @@ Look into license issues (should be ok since this is non-commercial?)
 
 Eventually want to publish in pip library - could also look into conda, but that 
 seems more complicated.
+
+  - How does uploading to pip work? Can updates be pushed there?
+  - Can documentation on github or elsewhere be referred to from a *pip* page?
