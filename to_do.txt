@@ -1,0 +1,81 @@
+TO DO
+#####
+
+04.01.21, version 0.0.1
+
+Content
+-------
+
+- Trouble with remove_ship_time() in jupyter notebooks -> figure doesn't show. 
+- Missing mask_surf_sidelobe() (should calculate based on beam angle, but not 
+  sure where to find that).
+- Missing a _to_netcdf function.
+
+Should populate *rdi_toolbox* with some basic analysis stuff (will take from other code 
+bits and make compatible with RdiObjs):
+
+- Profiles
+- Uv panels
+- Histograms of specific parameters for threshold setting
+- Variance ellipses
+- Spectra
+
+Probably don't want to go overboard in this one.
+
+
+Testing
+-------
+
+I've only done ad hoc testing as I added functionality. Need to do some more
+extensive testing on different datasets and different routines.
+
+Also need to do more extensive testing to ensure compatibility across platforms and 
+python3 versions. Should look into *pytest* etc.
+
+Need to check correct_magdec()
+- Check that the rotation is the right way, etc.
+- Check compatability with both constant and time-varying lon, lat.
+    - Option to interpolate in the set_latlon() method?
+
+Should include some nice-looking tests eventually.
+
+Documentation
+-------------
+
+Needs a proper documentation. Function docstrings are pretty decent, and rdi_adcp.example()
+should be ok -> can use these as a starting point.
+
+Update dependencies (do standard libraries go in setup.py?) - pkgutils etc
+
+Maybe look into sphinx documentation? I think there must be some way of automatic doc generation.
+
+Needs something for non-python users (probably a reference to some other documentation.)
+
+Make sure the git page looks ok.
+
+Get other people to test once I have done some more checks myself.
+
+
+Organization etc
+-----------------
+
+The rdi_adcp.py script is really bloated. Should probably look into moving at least the internal
+functions ("_" functions) into a different script (look into how this works with class-internal functions). 
+
+Should in any case make some effort to organize this code, perhaps making a quick overview in the initial docstring.
+
+Need to go through and check the formatting etc to make sure the code is fairly PEP8.
+
+Introduce line breaks (80L) in variables_dictionary.py
+
+Should probably make variables_dictionary into a "data file" to load (as per 
+https://docs.python.org/3/distutils/setupscript.html#installing-package-data point 2.7).
+Haven't really looked into this yet. 
+
+Publishing
+----------
+
+Look into license issues (should be ok since this is non-commercial?)
+
+Eventually want to publish in pip library - could also look into conda, but that 
+seems more complicated.

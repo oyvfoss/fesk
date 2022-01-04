@@ -1,0 +1,232 @@
+FUNCTIONS
+----------
+
+The basic setup
+###############
+
+``class RdiObj()``
+
+Class defining the object,
+
+``def __init__(self, matfn, vardict = vardict)``
+
+Constructor method. Takes the matfile location as input, as well as the
+``vardict`` dictionary defining the in and out names of variables. 
+
+Loads data, reads and computes various things:
+
+- Calculates time (mpl format) from the ``SerYear, SerDay`` etc fields.
+- Calculates bin depth from instrument configuration and transducer depth (from pressure).
+- Read variables from matfile as numpy masked arrays. Converting to nicer units
+  and variable names.
+- Calculate tilt from pitch and roll.
+- Write some metadata: Create the following dictionaries, all of which store
+  information that can be shown using specific print functions.
+
+  - ``hist_dict``: Contains information about the source file names, processing
+    dates etc.
+  - ``conf_dict``: Contains configuration/instrument details (bin
+    size, sampling rate, instrument type etc).
+  - ``proc_dict``: Contains a history of the processing steps taht have been
+    applied starting from the matfile. Stored as an ``OrderedDict`` since
+    processing steps are documented in chronological order to keep track of the
+    order in which processing operations were applied.
+  - ``stat_dict``: Contains basic statistics of the dataset, from time and depth
+    span to mean velocities, directions, etc etc.
+
+Auxiliary functions for reading matfile data
+############################################
+
+Functions that take a WinADCP matfile loaded as a python dictionary as input and
+extracts various information. These are called automatically in ``__init__()``)
+
+____________________
+
+``def load_data_from_matfile(self, mfile, vardict)``
+
+Loads variables from matfile and storing them in desired format in the RdiObj.
+The in and out names, units, and scale factors for unit conversions are taken
+from *vardict* loaded from *variables_dictionary.py*.  
+
+Stores as attributes in the RdiObj.
+
+For example, for zonal velocity:
+
+- Loading the *SerEmmpersec* field from the matfile as a numpy masked array.
+- Applying the scale factor *1e-1* to convert to the desired unit *cm/s*, both
+  specified in *vardict*.
+- Storing the numpy array as an attribute *u* (name also from *vardict*) in the RdiObj.
+
+Retaining masked/Nan values in the u/v/w/error velocity fields if there are any.
+
+Goes into debug mode if there is a problem loading a variable.
+
+See the attribute *var_desc* after running *load_data_from_matfile()* for an
+overview of the variables that have been loaded.
+
+____________________
+
+``def calculate_bindepths(self, mfile)``
+
+Calculate bin depths *(Nz, Nt)* in meters based on transducer depths and bin
+configuration using the following formula:
+
+    *depths = depthAnDepthmm*1e-3 - RDIBin1Mid - RDIBinSize * (SerBins[:]-1))*
+
+Stores as the ``dep`` attribute.
+____________________
+
+``def calculate_time(self, mfile)``
+
+Reads the information in the RDI matfile (variables "SerYear", "SerMon", etc)
+and creates an array of matplotlib times (days since 1970-1-1 UTC). Rounding down to
+nearest second (not concerned with sub-second time precision).
+
+Stores as the ``t_mpl`` attribute.
+____________________
+
+
+``def extract_conf(self, mfile)``
+Read configuration info / meta information from a source matfile loaded as
+dictionary. Output as a dictionary stored as the ``conf_dict`` attribute. 
+
+____________________
+
+
+Auxiliary functions for various data transforms/calculations
+############################################################
+
+
+``def calculate_time(self, mfile)``
+
+Calculate tilt from pitch/roll components
+See Mantovanelli1 et al 2014 and Woodgate et al 2011
+
+_______
+``def calculate_shear(self):``
+
+Calculate vertical shear from first differences of every second bin.
+
+
+
+
+Generic functions for chopping / rotating / applying offsets etc
+##################################################################
+
+``def apply_mask(self, mask_arr, include_errvel=True)``
+
+Mask the True indices of the *mask_arr* array.
+Velocity components (u, v, w) are always masked.
+
+include_errvel: Specify whether the error velocity should also be
+masked.
+
+if return_ns = True:  
+    Returns n, n_umasked_before, n_umasked_after, where:
+
+n: Total number of data points (masked and unmasked) at the time of
+    the operation.  
+n_umasked_before: Number of unmasked points after the operation.
+n_umasked_after: Number of unmasked points after the operation.
+_______
+
+``def remove_rows(self, rows)`` **X**
+
+Remove selected rows altogether from all 2D variables.
+
+*rows* can be either a slice or an iterable.
+
+Example:
+
+d.remove_rows([1, 2, 3, 170, 190])
+
+d.remove_rows(slice(20, 30))
+
+_______
+
+``def remove_columns(self, cols)`` **X**
+
+Remove selected columns/time entries from all 2D and 1D variables.
+
+*cols* can be either a slice or an iterable.
+
+Example:
+
+d.remove_columns([1, 2, 3, 170, 190])
+
+d.remove_columns(slice(20, 30))
+
+_______
+
+
+``def apply_depth_offset(self, offset_m)``
+
+Apply an offset to depths (transducer and bin depths)
+
+positive *offset_m* -> shift downwards.
+
+_______
+
+``def apply_depth_offset(self, offset_m)`` **X**
+
+Apply a rotation to the velocity components. 
+
+Affects the following fields: u, v, direction, (shu, shv).
+_______
+
+PROCESSING FUNCTIONS
+#####################
+Wrapper functions for applying masks/removing useless data etc.
+
+
+``def chop_dep_rec(self, thr_m = 3, autoaccept = False)`` **X**
+
+Reads the transducer depth (from pressure sensor), suggests a
+time range for valid measurements. If accepted by the user, 
+the deployment/recovery edges are removed. 
+
+The suggested range is from the first to the last index where transducer 
+depth is within *thr_m* meters of the deployment median depth.
+
+autoaccept = True: Skip user prompt - just accept the chopping suggested by 
+the algorithm.
+        
+_____
+
+``def chop_invalid_depth_range(self, thr_dep = None)`` **X**
+
+Removes depth bins where the average depth is above a certain depth below the
+surface. This depth can be specified either as an absolute depth in meters 
+(``thr_dep``) or a percentage of the mean transducer depth (``thr_pct``)
+(the former overrides the latter).
+
+Default is ``thr_pct=10``. This is usually the appropriate for instruments where
+the beam angle is XXXX.
+
+Chops these bins away altogether - reducing the depth dimensions of the dataset.
+
+Should be used *after* chop_dep_rec().
+
+____________________
+
+``def chop_sparse_bins(self, thr_prc = 50)``   **X**
+
+Removes bins where more than *thr_prc* percent of the samples are
+invalid (removes these bins from the dataset altogether, all variables).
+
+Usually a good idea to run *after* applying QC criteria.
+
+**Masking based on criteria** (**X**)
+
+
+Auxiliary functions for printing/displaying information
+############################################################
+
+``def print_hist(self)`` **X**
+
+Print information about the various processing steps, how many data points 
+were rejected/masked at each step etc.
+
+``print_system_info(self)`` **X**        
+
+Print details about the source file, instrument, and configuration. 
