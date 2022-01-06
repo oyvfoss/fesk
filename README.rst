@@ -12,7 +12,7 @@ Post-processing and basic analysis of ocean ADCP data using python.
 (Currently only has functionality for RDI ADCP data - starting from .mat 
 files output by WinADCP).
 
-(At teh moment: primarily functionality for processing, not much for
+(At the moment: primarily functionality for processing, not much for
 analysis/inspection. Will add more of this later. )
 
 Creates a ``RdiObj`` object containing the data. This object can be easily 
