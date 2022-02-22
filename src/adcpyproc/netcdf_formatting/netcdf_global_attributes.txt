@@ -1,0 +1,137 @@
+'''
+
+EXAMPLE NETCDF ATTRIBUTE DICTIONARY
+
+This file contains important information that will be added as attributes
+to your netCDF file. When exporting your dataset to netCDF, modify the fields 
+below as you see fit.
+
+Note that this is a python dictionary. It must be on the form:
+
+    dict = {'name1': value1,
+            'name2': value2, 
+            ...,
+            }
+
+The values can be different data types, but in our case we need it to 
+be either a string (Example: 'example string') or None.
+
+Make sure the entries are separated by commas - you will have trouble otherwise.
+
+All entries that are not None will be set as attributes in the netCDF file.
+
+Some other mandatory attributes (lat/lon ranges, time period, etc) are created
+automatically from the data).
+'''
+
+
+
+ncattrs_global = {
+    ### -------------------------------------------------------------------
+    ### These MUST be filled out for each individual dataset: 
+    ### -------------------------------------------------------------------
+
+    # Title of the dataset
+    'title': 'Ocean currents from NNN Expedition', 
+    
+    # Summary of the dataset - analogous to a paper abstract
+    'summary': ''' 
+    Long summary here. Up to 100 words is recommended.
+    ''', 
+
+    # ID of the dataset (could be filename without .nc suffix or similar)
+    'id': 'ocean_curr_NNN',
+
+    # Principally responsible for publishing the data institution/group/person
+    'publisher_name':  'Institute of NN',
+
+    # Name / URL of institution  (e.g. "npolar.no")
+    'naming authority': 'nn_institute.org',
+
+    ### -------------------------------------------------------------------
+    ### These are RECOMMENDED to be filled out for each individual dataset:
+    ### -------------------------------------------------------------------
+
+    # General information
+    'ancillary_keywords': 'In-Situ,Mooring,Current,ADCP',
+    'version': None, # Good practice to use 1.0 here for each new dataset
+    'citation': None, # Citation to be used in publications using the data
+    'comment': None, # A good place to provide useful information
+    'references': None, # Ref to data description/methods (URL, DOI etc.)
+    'related_url': None, # Link(s) to useful related website(s)
+
+    # Information of about the creator of the file
+    'creator_name': None,
+    'creator_email': None,
+    'creator_institution': None,
+    'creator_url': None,
+    'institution': None, # Responsible for originating data
+    'program': None, # Overarching program of which the dataset is part
+    'project': None, # Project(s), use comma if multiple
+    'acknowledgements': None, # Good place to acknowledge funding etc.
+
+    # Information about the publisher of the dataset
+    'publisher_email': None,
+    'publisher_url': None,
+
+    # More information about where the dataset was collected
+    'cruise_name': None,
+    'area': None, # Recommended: (North/Tropical/South Atlantic/Pacific/
+                 # Indian Ocean, Southern Ocean, Arctic Ocean)
+    'location': None, # More specific (e.g. "Kongsfjorden", "Amundsen Basin")
+    'instrument': None, # Instrument(s)/sensors(s) used to create the data
+    'platform': None, # Platform that supported the sensor (e.g. satellite,
+                      # ship, station, aircraft..
+    'site_code': None, # E.g. "F1", "AT800" for a mooring, "ST1" for a
+                        # station, etc.
+    'source': None, # Method of data production, e.g. "mooring"
+
+    ### -------------------------------------------------------------------
+    ### These MUST be filled out, but typically do not need to be changed
+    ### -------------------------------------------------------------------
+
+    'conventions': 'NPI-0.2',
+    'cdm_data_type': None,
+    'data_assembly_center': None,
+    'featureType': 'timeSeriesProfile',
+    'iso_topic_category': 'oceans',
+    'keywords': ('EARTH SCIENCE>OCEANS>OCEAN CIRCULATION>OCEAN CURRENTS,'
+                  'EARTH SCIENCE>OCEANS>OCEAN PRESSURE>WATER PRESSURE'),
+    'keywords_vocabulary': 'NASA/GCMD Science Keywords 9.1.5',
+    'license': 'CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)',
+    'processing_level': 'Data manually reviewed',
+    'private_description': 'false',
+    'standard_name_vocabulary': 'CF Standard Name Table v78',
+
+    ### -------------------------------------------------------------------
+    ### These are RECOMMENDED to be filled out, but typically do not need
+    ### to be changed
+    ### -------------------------------------------------------------------
+
+    'standard_name_vocabulary': 'CF Standard Name Table v78',
+    'QC_indicator': 'good_data',
+    'platform_vocabulary': 'NASA/GCMD Platform Keywords 9.1.5',
+    'data_set_language': 'eng',
+    'data_set_progress': 'complete',
+    'data_set_progress': 'complete',
+    'geospatial_bounds_crs': 'EPSG:4326',
+    'geospatial_bounds_vertical_crs': 'EPSG:5831',
+    'geospatial_lat_units': 'degrees_north',
+    'geospatial_lon_units': 'degrees_east',
+    'geospatial_vertical_positive': 'down',
+    'history': '',
+
+    ### -------------------------------------------------------------------
+    ### OTHER ( ) 
+    ### -------------------------------------------------------------------
+
+    'my_attribute_string': None,
+
+    ### -------------------------------------------------------------------
+    ### OTHER (Processing toolbox pointer) 
+    ### -------------------------------------------------------------------
+
+    'post_processing_tools': ('Post-processing and netCDF packaging done '
+        'using ADCPYPROC (https://github.com/oyvlun/adcpyproc).'),
+
+}

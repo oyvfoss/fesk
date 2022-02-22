@@ -12,7 +12,9 @@ setup(
                 'internal_functions'],
     package_dir={'':'src'},
     packages=['adcpyproc'],
-    package_data={'adcpyproc': ['WMM_COF_files/*.COF']},
+    package_data={'adcpyproc': [
+                'WMM_COF_files/*.COF', 
+                'netcdf_formatting/netcdf_global_attributes.txt']},
     setup_requires=['numpy'],
     install_requires=[
         'numpy',

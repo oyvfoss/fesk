@@ -23,6 +23,15 @@ bits and make compatible with RdiObjs):
 Probably don't want to go overboard in this one.
 
 
+
+
+#### STATUS 22.2.22
+
+Worked a lot on the netcdf export functionality. Getting close (see testing_script_minimal.py).
+
+Issue at the moment: time dimension of "dep" is 2 profiles longer than time dimension of
+u/v/t_mpl... --> fix!
+
 Testing
 -------
 
@@ -61,11 +70,6 @@ Get other people to test once I have done some more checks myself.
 Organization etc
 -----------------
 
-The rdi_adcp.py script is really bloated. Should probably look into moving at least the internal
-functions ("_" functions) into a different script (look into how this works with class-internal functions). 
-
-Should in any case make some effort to organize this code, perhaps making a quick overview in the initial docstring.
-
 Need to go through and check the formatting etc to make sure the code is fairly PEP8.
 
 Introduce line breaks (80L) in variables_dictionary.py
@@ -73,6 +77,9 @@ Introduce line breaks (80L) in variables_dictionary.py
 Should probably make variables_dictionary into a "data file" to load (as per 
 https://docs.python.org/3/distutils/setupscript.html#installing-package-data point 2.7).
 Haven't really looked into this yet. 
+
+Should look into whether library imports should be done in __init__.py instead
+of in the rdi_adcp.py. Would be cleaner anyways.
 
 Publishing
 ----------

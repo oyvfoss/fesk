@@ -45,6 +45,11 @@ _WARN_STR
 
 Various Warning message strings.  
 
+_NETCDF_DICT
+-------------
+
+Contains conventions used when translating data to netCDF.
+
 '''
 
 # _VARDICT_RDI
@@ -364,6 +369,5 @@ _warn_str = {
         'WMM2020 is only valid through 2024. Proceed with caution..'),
 
     'magdec_2010' : (
-        'WMM2010 is only valid starting in 2010. Proceed with caution..'),
-                            
+        'WMM2010 is only valid starting in 2010. Proceed with caution..'),                         
 }

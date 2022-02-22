@@ -101,6 +101,7 @@ def _calculate_bin_depths(self, mfile):
                 + sign * mfile['RDIBin1Mid'] + sign * mfile['RDIBinSize'] 
                 * (mfile['SerBins'][:, np.newaxis] - 1))[0].T
     self.units['dep'] = 'm'
+    self.bin_size = mfile['RDIBinSize'] 
     self.var_desc['dep'] = 'Time-varying depth of bin (m)'
 
 #######################################################################

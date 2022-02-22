@@ -20,6 +20,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import xarray as xr
 import datetime as dt
 import pickle
 from matplotlib.dates import num2date, date2num
@@ -28,6 +29,7 @@ from collections import OrderedDict
 import time
 import pickle
 import warnings
+import os
 
 # Internal libraries
 from adcpyproc.misc_functions import declination, t_python_to_mat
@@ -39,18 +41,20 @@ from adcpyproc import _rdi_defs
 # the present module for user relevant functions)
 from adcpyproc import _read_rdifile_methods_rdi_adcp
 from adcpyproc import _data_operation_methods_rdi_adcp
+from adcpyproc._netcdf_export import _create_netcdf
+from adcpyproc import __file__ as _initloc
 
 
 # Enable interactive mode for pyplot
 # (necessary for correct rendering of figures in loops, etc)
 plt.ion()
 
+
 #######################################################################
 # CLASS DEFINITION AND CONSTRUCTOR METHOD
 # (Loading an ADCP file into this processing framework amounts to
 # generating an RdiObj, e.g.: d = rdi_adcp.RdiObj('adcpdata.mat')
 #######################################################################
-
 
 class RdiObj:
 
@@ -95,7 +99,8 @@ class RdiObj:
 
     def set_latlon(self, lat=None, lon=None):
         """
-        Add lat and lon (decimal degrees).
+        Add lat and lon (decimal degrees). Can be single floats or arrays of
+        floats.
         """
 
         if not lat:
@@ -103,6 +108,9 @@ class RdiObj:
         if not lon:
             lon = np.float(input('Input longitude (decimal degrees): '))
         self.lon, self.lat = lon, lat
+
+        self.latlon_single = not hasattr(self.lon, 'len')
+
         print('Set lat and lon.')
 
     #######################################################################
@@ -709,7 +717,6 @@ class RdiObj:
 
     #######################################################################
 
-
     def to_matfile(self, file_name, sparse = True, matlab_format = '5'):
         '''
         Export to a matfile (replacing matplotlib time with a time stamp
@@ -763,12 +770,45 @@ class RdiObj:
 
     #######################################################################
 
-    def to_netcdf(self, file_name, sparse = True):
+    def prepare_for_netcdf(self, netcdf_dir,
+                    attr_file='netcdf_global_attributes.py'):
+        '''
+        Create a file with netCDF global attributes to be filled out
+        before creatign the netcdf
+        '''
+
+        # Get the path of the default file with netCDF attributes
+        ncattrfile_default = _initloc.replace('__init__.py', 
+            'netcdf_formatting/netcdf_global_attributes.txt')
+
+        # Make a copy of this file in the destination'
+        cp_cmd = 'cp %s %snetcdf_global_attributes.py'%(
+                ncattrfile_default, netcdf_dir)
+        try:
+            os.popen(cp_cmd) 
+        except: 
+            raise Exception(
+                'Could not execute the following command: %s'%cp_cmd)
+
+        self.prepared_for_nc = True
+
+
+    #######################################################################
+
+
+    def to_netcdf(self, netcdf_dir, netcdf_file, 
+                    attr_file='netcdf_global_attributes.py'):
         '''
         Save to a NetCDF file (TBD).
         '''
-        print('NetCDF export not implemented yet..')
-        pass
+
+        if hasattr(self, 'prepared_for_nc'):
+            _create_netcdf(self, netcdf_dir, netcdf_file, 
+                    attr_file='netcdf_global_attributes.py')
+        else:
+            raise Exception('Before you can make a netCDF file, ' 
+            'you need to run *prepare_for_netcdf()* and edit the file '
+            '*netcdf_global_attributes.py* with details of your dataset.')
 
 
 #######################################################################
