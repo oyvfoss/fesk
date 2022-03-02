@@ -132,3 +132,17 @@ def t_python_to_mat(pytime):
     mattime = pytime + 719529.0
 
     return mattime
+
+
+#########################
+
+def closest(x, x0):
+    '''
+    Takes an 1d array x and returns the index at which x is closest to a
+    value x0
+    '''
+    if len(np.shape(x))>1:
+        raise TypeError('Only works for 1-d arrays right now.')
+    dx = abs(x-x0)
+    ind = np.nonzero(dx==np.ma.min(dx))[0]
+    return ind[0]

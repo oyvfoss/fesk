@@ -2,6 +2,7 @@
 import netCDF4
 import numpy as np
 import os
+import datetime
 from adcpyproc.netcdf_formatting._ncattrs_variables import _ncattrs_variables as _ncattrs_vars
 
 def _create_netcdf(d, netcdf_dir, netcdf_file, 
@@ -57,7 +58,7 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
         'standard_name': 'time', 
         'units': 'days since 1970-01-01T00:00:00Z'})
 
-    t_fmt_nc = '%Y-%m-%dT%h:%m:%sZ'
+    t_fmt_nc = '%Y-%m-%dT%H:%M:%SZ'
     N.setncattr('time_coverage_start', d.t_datetime[0].strftime(t_fmt_nc))
     N.setncattr('time_coverage_end', d.t_datetime[-1].strftime(t_fmt_nc))
 
@@ -79,7 +80,7 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
         N.createVariable(varnm_,
             getattr(d, varnm_).dtype, ('nDEPTH', 'TIME'),
             fill_value=fill_value)
-        print(N[varnm_][:].shape, getattr(d, varnm_).shape)
+
         N[varnm_][:] = getattr(d, varnm_)
         N[varnm_].setncattr('valid_max', N[varnm_][:].max())
         N[varnm_].setncattr('valid_min', N[varnm_][:].min())
@@ -87,7 +88,7 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
 
 
     # Global attributes (created based on the data)
-    date_now = dt.datetime.now().strftime(t_fmt_nc)
+    date_now = datetime.datetime.now().strftime(t_fmt_nc)
     N.setncattr('date_created', date_now)
 
     if d.latlon_single:
@@ -111,10 +112,12 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
 
 
     # Global attributes (other)
-    N.setncattr('Instrument serial number', str(SN))
+    if hasattr(d, 'SN'):
+        N.setncattr('instrument_serial_number', str(d.SN))
+    else:
+        N.setncattr('instrument_serial_number', '')
     N.setncattr('processing_history', d.print_proc(return_str = True))
     N.setncattr('system_info', d.print_system_info(return_str = True))
-
 
     # cd back to the original directory
     os.chdir(initial_dir)

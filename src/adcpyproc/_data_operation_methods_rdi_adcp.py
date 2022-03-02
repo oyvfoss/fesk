@@ -53,6 +53,7 @@ def _setup(self, matfn):
         self.u.mask.sum(), 100 * self.u.mask.sum()
         / (self.Nt * self.Ndep)))
 
+
     # Calculate time
     self._calculate_time(m)
 
@@ -62,7 +63,9 @@ def _setup(self, matfn):
 
     print('Calculating bin depths..')
     self._calculate_bin_depths(m)
+
     self.dep_med = np.median((self.dep), axis=1)
+
 
     # Flipping depth dimension if orientation is downward
     self._flip_to_ori()
@@ -135,7 +138,7 @@ def _rotate_uv(self, ang_deg, write_to_proc_dict=True):
     an offset to *direction*.
     """
     uvc_orig = self.u + 1j * self.v
-    uvc_rot = uvc_orig * np.exp(1j * ang_deg)
+    uvc_rot = uvc_orig * np.exp(1j * ang_deg*np.pi/180)
     self.u, self.v = uvc_rot.real, uvc_rot.imag
     self.direction = self.direction + ang_deg
     if hasattr(self, 'shu'):

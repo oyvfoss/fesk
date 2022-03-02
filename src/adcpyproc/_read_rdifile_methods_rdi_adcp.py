@@ -29,8 +29,8 @@ def _load_data_from_matfile(self, mfile, vardict, explicit = False):
                 elif vd_['dim'] == 1:
                     outvar_ = mfile[nm] * vd_['fact_in_to_out']
                     n_1dvars += 1
-            except Exception:
-                Warning('Issue with variable "%s"/"%s"' % (
+            except:
+                raise Warning('Issue with variable "%s"/"%s"' % (
                     outnm_, nm) +
                     '(skipping this variable).')
 
@@ -42,6 +42,7 @@ def _load_data_from_matfile(self, mfile, vardict, explicit = False):
 
     print('Reading data arrays: -> done.         '
             '(%i 2D variables)' % (n_2dvars + n_1dvars))
+
     for nm in ('u', 'v', 'w', 'direction', 'errvel'):
         try:
             outvar_masked_ = np.ma.masked_invalid(getattr(self, nm))
@@ -51,6 +52,7 @@ def _load_data_from_matfile(self, mfile, vardict, explicit = False):
             pass
 
 #######################################################################
+
 
 def _get_orientation(self):
     '''
@@ -97,11 +99,11 @@ def _calculate_bin_depths(self, mfile):
     elif self_ori == 'down':
         sign = +1
 
-    self.dep = (mfile['AnDepthmm'][np.newaxis, :] * 0.001 
+    self.dep = (self.tdepth[np.newaxis, :]
                 + sign * mfile['RDIBin1Mid'] + sign * mfile['RDIBinSize'] 
-                * (mfile['SerBins'][:, np.newaxis] - 1))[0].T
+                * (mfile['SerBins'][0] - 1)[:, np.newaxis])
     self.units['dep'] = 'm'
-    self.bin_size = mfile['RDIBinSize'] 
+    self.bin_size = mfile['RDIBinSize'][0][0]
     self.var_desc['dep'] = 'Time-varying depth of bin (m)'
 
 #######################################################################
@@ -152,4 +154,6 @@ def _calculate_time(self, mfile):
                                 '(days since 1970-1-1)')
     self.var_desc['t_datetime'] = ('Time stamp (matplotlib '
                                     'datetime object)')
+    self.d_t = np.median(np.diff(t_mpl))
+    
     print('Calculating time: -> done.          ')

@@ -1,6 +1,8 @@
 '''
 
-EXAMPLE NETCDF ATTRIBUTE DICTIONARY
+EXAMPLE NETCDF ATTRIBUTE DICTIONARY -
+FILL OUT THE FIELDS BELOW BEFORE EXPORTING A NETCDF FILE
+FROM YOUR DATASET!
 
 This file contains important information that will be added as attributes
 to your netCDF file. When exporting your dataset to netCDF, modify the fields 
