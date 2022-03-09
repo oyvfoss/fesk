@@ -43,6 +43,7 @@ from adcpyproc import _read_rdifile_methods_rdi_adcp
 from adcpyproc import _data_operation_methods_rdi_adcp
 from adcpyproc._netcdf_export import _create_netcdf
 from adcpyproc import __file__ as _initloc
+from adcpyproc import rdi_toolbox
 
 
 # Enable interactive mode for pyplot
@@ -570,7 +571,7 @@ class RdiObj:
         self._record_proc_step('shear', '')
 
     #######################################################################
-    # PRINTING/HISTORY/DOC FUNCTIONS
+    # PRINTING/HISTORY/DOC/PLOTTING FUNCTIONS
     #######################################################################
 
     def add_note(self, note_str=None):
@@ -656,7 +657,78 @@ class RdiObj:
 
         print(sum_str)
 
-    
+    # Plotting functions from rdi_toolbox
+    #######################################################################
+
+    def hist(self, varnm, nbins = 50, line = None, return_ax = False):
+        '''
+        Show histogram(s) of a variable.
+        
+        For 1D parameters (tdepth, heading, tilt..): 
+            Showing a simple histogram
+        For 2D parameters (u, amp_a, ca1..)
+            Simple histogram + histograms by depth
+        
+        varnm: Short variable name ('u', 'amp1', 'tilt'..)
+        nbins: Number of bins to use for histogram
+        line: Plot a vertical line here. Useful for looking at 
+            thresholds.
+        return_ax: return the axis object
+        '''
+
+        ax = rdi_toolbox.hist(self, varnm, nbins = nbins, line = line,
+                        return_ax = True)
+        plt.show()
+
+        if return_ax:
+            return ax
+
+    #######################################################################
+
+    def plot_ellipse(self, dep0 = None, dep1 = None, lp_days = 5, 
+                    return_ax = False):
+        '''
+        Plot of u and v components averaged between *dep0* and *dep1* and
+        low pass filtered with a running mean of *lp_days*.
+
+        Showing the mean current vector, the low-pass-filtered 
+        and subsampled currents, and the semi-major and -minor axes
+        of the variance ellipse. 
+
+        return_ax: return the axis object
+
+        '''
+        ax = rdi_toolbox.plot_ellipse(self, dep0 = dep0, dep1 = dep1, 
+                lp_days = lp_days)
+        plt.show()
+        if return_ax:
+            return ax
+
+    #######################################################################
+
+    def uv_panels(self, wlen = None, subsamp = None, cmap_saturate = 99, 
+                save_file = None, return_ax = False):
+        '''
+        Quick panels of U and V.
+
+        wlen: Window length for running mean (days). Default ~1 day
+        subsamp: Subsampling period (for reducing the array sizes) (days).
+                Default is around 1/4 of wlen.s
+        cmap_saturate: Saturating the colormap at this percentile. 
+        save_file: Enter a valid file path to save the figure.
+        return_ax: return the axis object
+        '''
+
+        ax = rdi_toolbox.uv_panels(self, wlen_days = wlen, 
+            subsamp_days = subsamp,
+            cmap_saturate = cmap_saturate, save_file = save_file,
+            return_ax = True)
+        plt.show()
+
+        if return_ax:
+            return ax
+
+
     #######################################################################
     # EXPORTING FUNCTIONS
     #######################################################################
@@ -809,6 +881,11 @@ class RdiObj:
             raise Exception('Before you can make a netCDF file, ' 
             'you need to run *prepare_for_netcdf()* and edit the file '
             '*netcdf_global_attributes.py* with details of your dataset.')
+
+
+    #######################################################################
+
+
 
 
 #######################################################################

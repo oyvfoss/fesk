@@ -1,36 +1,42 @@
 TO DO
 #####
 
-04.01.21, version 0.0.1
+
+
 
 Content
 -------
 
 - Trouble with remove_ship_time() in jupyter notebooks -> figure doesn't show. 
+  
+  - Is this solved by calling *%matplotlib*?
+
 - Missing mask_surf_sidelobe() (should calculate based on beam angle, but not 
   sure where to find that).
-- Missing a _to_netcdf function.
 
-Should populate *rdi_toolbox* with some basic analysis stuff (will take from other code 
-bits and make compatible with RdiObjs):
-
-- Profiles
-- Uv panels
-- Histograms of specific parameters for threshold setting
-- Variance ellipses
-- Spectra
-
-Probably don't want to go overboard in this one.
+- Needs some reorganization - new stuff is a bit all over the place.
 
 
 
 
-#### STATUS 22.2.22
+#### STATUS 09.3.22
 
-Worked a lot on the netcdf export functionality. Getting close (see testing_script_minimal.py).
+- Made functionality for exporting to netCDF.
+  - Need to do soem final tweaks to make it completely CF-compatible.
 
-Issue at the moment: time dimension of "dep" is 2 profiles longer than time dimension of
-u/v/t_mpl... --> fix!
+- Made a bunch of diagnostics plot functions that should be reasonably robust:
+
+  - xy plot of uv, with variance ellipses etc.
+  - uv panel/profile plots
+  - histograms
+
+- Corrected a previous error in uv-rotation.
+
+Figures out that jupyter notebook plots seem to be ok if %matplotlib is 
+called - no idea why.
+
+
+
 
 Testing
 -------
@@ -69,6 +75,9 @@ Get other people to test once I have done some more checks myself.
 
 Organization etc
 -----------------
+
+Need to look at how things are organized after recent changes. Esp the plotting 
+functions and netcdf stuff.
 
 Need to go through and check the formatting etc to make sure the code is fairly PEP8.
 
