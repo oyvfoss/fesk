@@ -48,7 +48,7 @@ def _setup(self, matfn):
 
     # Record keeping: Initial data details
     self._record_proc_step('shape_init', (
-        self.Nt, self.Ndep, self.Nt * self.Ndep))
+        self.Ndep, self.Nt, self.Nt * self.Ndep))
     self._record_proc_step('mask_init', (
         self.u.mask.sum(), 100 * self.u.mask.sum()
         / (self.Nt * self.Ndep)))
@@ -129,7 +129,7 @@ def _apply_mask(self, mask_arr, include_errvel=True, return_ns=False):
 
 def _rotate_uv(self, ang_deg, write_to_proc_dict=True):
     """
-    Rotates the horizontal currents clockwise.
+    Rotates the horizontal current vector counterclockwise.
 
     ang_deg: Angle (degrees) - can be 1D iterable with dimension 
                                 (time).
@@ -140,7 +140,7 @@ def _rotate_uv(self, ang_deg, write_to_proc_dict=True):
     uvc_orig = self.u + 1j * self.v
     uvc_rot = uvc_orig * np.exp(1j * ang_deg*np.pi/180)
     self.u, self.v = uvc_rot.real, uvc_rot.imag
-    self.direction = self.direction + ang_deg
+    self.direction = self.direction - ang_deg
     if hasattr(self, 'shu'):
         shuvc_orig = self.shu + 1j * self.shv
         shuvc_rot = shuvc_orig * np.exp(1j * ang_deg)

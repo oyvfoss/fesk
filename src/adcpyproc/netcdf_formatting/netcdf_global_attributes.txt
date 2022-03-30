@@ -48,7 +48,7 @@ ncattrs_global = {
     'publisher_name':  'Institute of NN',
 
     # Name / URL of institution  (e.g. "npolar.no")
-    'naming authority': 'nn_institute.org',
+    'naming_authority': 'nn_institute.org',
 
     ### -------------------------------------------------------------------
     ### These are RECOMMENDED to be filled out for each individual dataset:
@@ -78,6 +78,7 @@ ncattrs_global = {
 
     # More information about where the dataset was collected
     'cruise_name': None,
+    'project': None,
     'area': None, # Recommended: (North/Tropical/South Atlantic/Pacific/
                  # Indian Ocean, Southern Ocean, Arctic Ocean)
     'location': None, # More specific (e.g. "Kongsfjorden", "Amundsen Basin")
@@ -92,7 +93,7 @@ ncattrs_global = {
     ### These MUST be filled out, but typically do not need to be changed
     ### -------------------------------------------------------------------
 
-    'conventions': 'NPI-0.2',
+    'conventions': 'ACDD-1.3, CF-1.8',
     'cdm_data_type': None,
     'data_assembly_center': None,
     'featureType': 'timeSeriesProfile',

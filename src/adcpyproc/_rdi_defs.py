@@ -180,6 +180,10 @@ _proc_str_dict_rdi = {
                  'exceeds %.1f degrees.'
                 '\n   -> Masked %i profiles - %i of %i entries'
                 ' (%.2f%% of previously unmasked).'),
+    'heading_corr' : ('Applied heading-dependent correction to compass heading and'
+                'current vector angle. Sinusiodal correction parameters [amplitude '
+                ' phase  (offset)]: %s. STD of sinusoidal fit: %.1f degrees. '
+                'Average heading correction: %.1f degrees.'),
     'shape_final' : ('\nFinal dataset shape: (Bins = %i, Profiles '
         '= %i) -> %i data points.'),
     'mask_final' : 'Final masked entries: %i (%.2f %% of total).',

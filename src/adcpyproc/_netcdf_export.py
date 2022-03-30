@@ -5,6 +5,28 @@ import os
 import datetime
 from adcpyproc.netcdf_formatting._ncattrs_variables import _ncattrs_variables as _ncattrs_vars
 
+
+def time_diff_to_isofmt(t0, t1):
+    '''
+    Return a time difference between two time points in ISO 8601:2004 format.
+    
+    t0, t1 are times in days. 
+    '''
+
+    d_year = np.floor((t1 - t0)/365.25)
+    d_day= np.floor(t1 - t0 - d_year*365.25)
+    d_hour= np.floor((t1 - t0 - d_year*365.25 - d_day)*24)
+    d_min= np.floor(((t1 - t0 - d_year*365.25 - d_day)*24 
+                    - d_hour)*60)
+    d_sec= np.floor((((t1 - t0 - d_year*365.25 - d_day)*24 
+                    - d_hour)*60-d_min)*60)
+    duration_str = 'P%iY%03iDT%02iH%02iM%02iS'%(
+        d_year, d_day, d_hour, d_min, d_sec)
+
+    return duration_str
+
+
+
 def _create_netcdf(d, netcdf_dir, netcdf_file, 
                     attr_file='netcdf_global_attributes.py'):
     '''
@@ -20,6 +42,8 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
                         'Check that it exists?')
 
     # Import the variable attribute dictionary
+    from netcdf_global_attributes import ncattrs_global as ncattr_glob
+
     try:
         from netcdf_global_attributes import ncattrs_global as ncattr_glob
     except:
@@ -29,9 +53,7 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
                         attr_file, netcdf_dir) +
                         'Check that it exists?')
 
-
     # Create the ncfile
-
 
     # Check if file exists:
     if  os.path.isfile(netcdf_dir + netcdf_file):
@@ -62,8 +84,6 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
     N.setncattr('time_coverage_start', d.t_datetime[0].strftime(t_fmt_nc))
     N.setncattr('time_coverage_end', d.t_datetime[-1].strftime(t_fmt_nc))
 
-
-
     # Lon / lat
     if d.latlon_single:
         ll_dim = ()
@@ -86,6 +106,9 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
         N[varnm_].setncattr('valid_min', N[varnm_][:].min())
         N[varnm_].setncattr('units', getattr(d, 'units')[varnm_])
 
+        # Variable attributes
+        for var_attr in vdict_['attrs'].keys():
+            N[varnm_].setncattr(var_attr, vdict_['attrs'][var_attr])
 
     # Global attributes (created based on the data)
     date_now = datetime.datetime.now().strftime(t_fmt_nc)
@@ -101,8 +124,15 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
         N.setncattr('geospatial_lon_max', d.lon.max())
         N.setncattr('geospatial_lat_min', d.lat.min())
         N.setncattr('geospatial_lat_max', d.lat.max())
-    
+
+    N.setncattr('geospatial_vertical_min', np.round(d.dep.min(), 2))
+    N.setncattr('geospatial_vertical_max', np.round(d.dep.max(), 2))
     N.setncattr('geospatial_vertical_resolution', d.bin_size)
+
+    N.setncattr('time_coverage_duration', time_diff_to_isofmt(
+        d.t_mpl[0], d.t_mpl[-1]))
+    N.setncattr('time_coverage_resolution', time_diff_to_isofmt(
+        0, d.d_t))
 
 
     # Global attributes (loaded from pre-made file)
