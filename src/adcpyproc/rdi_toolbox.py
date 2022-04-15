@@ -320,7 +320,7 @@ def _depavg_uv(A, dep, dep0=None, dep1=None,
     depsl = slice(dep_ind0, dep_ind1)
 
     Amean = A[depsl].mean(axis = 0)
-    print(depsl)
+
     if return_deprange:
         return Amean, [dep[depsl][0], dep[depsl][-1]]
     else:
@@ -444,18 +444,15 @@ def _histogram_param_2d(d, varnm, ax, nbins = 50):
     varmax = getattr(d, varnm)[~d.u.mask].max()
     bins = varmin + np.arange(nbins+1)*(varmax-varmin)/nbins
     d_bins = np.diff(bins)[0]
-    print('bins.shape', bins.shape, 'nbins', nbins)
-    print('varmax', varmax, 'bins[-1]', bins[-1])
+
     # Histogram at each depth
     H_bydep = np.ma.zeros((d.Ndep, nbins, ))
     H_bydep.mask = True
-    print('H_bydep.shape', H_bydep.shape, )
 
     for nn in np.arange(d.Ndep):
         VAR_nn = getattr(d, varnm)[nn]
         VAR_nn_valid = VAR_nn[~d.u.mask[nn]]
         H_bydep_, H_bins_ = np.histogram(VAR_nn_valid, bins = bins)
-        print(nn, 'H_bydep_.shape', H_bydep_.shape, )
         N_all = len(VAR_nn_valid)
         H_bydep[nn] = H_bydep_*100/N_all
     

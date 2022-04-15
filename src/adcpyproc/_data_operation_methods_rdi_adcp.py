@@ -5,19 +5,25 @@ import scipy.io
 import datetime as dt
 from collections import OrderedDict
 from adcpyproc import _rdi_defs
+from adcpyproc import _heading_correction
+import matplotlib.pyplot as plt
 
 #######################################################################
 # SETUP THE OBJECT FROM A .MAT FILE
 #######################################################################
 
 
-def _setup(self, matfn):
+def _setup(self, matfn, orientation='auto'):
     """
     Load matfile (typically processed from binary file using
     WinADCP) and transfer variables to RdiObject with conventions
     (see _rdi_defs.py).
 
     Convention: Depth decreases with increasing 0th index.
+
+    If 'orientation' is 'auto', we assume an instrument orientation 
+    as specified in the file. Can be overridden by setting orientation
+    as 'up' or 'down'.
     """
 
     print('Initializing postprocessing by creading RdiObj object from'
@@ -59,7 +65,11 @@ def _setup(self, matfn):
 
     # Check orientation and remove any profiles where the instrument
     # faced the wrong way
-    self._get_orientation()
+    self._get_orientation(orientation=orientation)
+    if orientation != 'auto':
+            print('Orientation manually set to %s.'%self._ori)
+    else:
+            print('Orientation automatically set to %s.'%self._ori)
 
     print('Calculating bin depths..')
     self._calculate_bin_depths(m)
@@ -335,3 +345,82 @@ def _record_proc_step(self, operation_name, value):
             opnm = '%s_%i' % (operation_name, nn)
 
     self._proc_dict[opnm] = (operation_name, value)
+
+#######################################################################
+
+def apply_heading_correction(self, heading_true, heading_obs, 
+            allow_offset = True, plot_fit = True, auto_accept = False):
+    '''
+    Apply heading-dependent correction to the current direction.
+    Usful for apply a "lookup table" where we have measured the instrument
+    heading (heading_obs) at various true headings (heading_true) measured by
+    an external compass. Finds a sinusiodal fit a 
+    
+    Least squares best fit of the observed difference between trua and observed
+    heading to the function f = AMP * sin(deg_obs/180*pi + PHASE) + OFFSET.
+
+    If allow_offset is *False*, we assume a zero offset and only fit two
+    parameters.
+    
+    All parameters (including phase) are in degrees.
+
+    Returns f, std_degs, where:
+
+    f is the function
+
+        f(heading)
+
+    which is the best fit to approximate
+
+        heading_true = heading_obs + f(heading_obs)
+
+    std_degs is the standard deviation between 
+    
+        f(heading_obs) and heading_true - heading_obs
+    '''
+
+    f, std_degs, params = _heading_correction.fit_lookup_table(heading_true, 
+            heading_obs, allow_offset = allow_offset)
+    
+    if plot_fit:
+
+        degdiff = heading_true - heading_obs
+        degdiff[degdiff>180] -= 360
+        degdiff[degdiff<-180] += 360
+
+        fig, ax = plt.subplots(figsize = (6, 3))
+        ax.plot(heading_obs, degdiff, 'o', label = 'Table')
+        xdeg = np.arange(0, 361)
+        ax.plot(xdeg, f(xdeg), '-', label = 'Fit')
+        ax.set_xlabel('True heading [deg]')
+        ax.set_ylabel('True heading minus instrument heading [deg]')
+
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
+
+    if auto_accept:
+        accept = 'y'
+    if not auto_accept:
+        print('Fit parameters [amplitude  phase  (offset)]: ', params)
+        print('Std of fit: %.1f degrees.'%std_degs)
+        accept = input('Accept and apply heading correction? (y/n): ')
+    
+    if accept == 'y':
+        heading_orig = self.heading
+        heading_correction = f(heading_orig)
+        heading_new = heading_orig + heading_correction
+        heading_new[heading_new>360] -= 360
+        heading_new[heading_new<0] += 360
+        self.heading = heading_new
+
+        direction_new =  self.direction + heading_correction
+        direction_new[direction_new>360] -= 360
+        direction_new[direction_new<0] += 360
+        self.direction = direction_new
+
+        self._rotate_uv(-heading_correction, write_to_proc_dict=False)
+        self._record_proc_step('heading_corr', 
+            (np.round(params, 1), std_degs, heading_correction.mean()))
+

@@ -9,7 +9,7 @@ from a compass external to the instrument).
 '''
 
 from scipy.optimize import curve_fit
-
+import numpy as np
 
 def fit_lookup_table(heading_true, heading_obs, allow_offset = True):
     '''
@@ -58,51 +58,4 @@ def fit_lookup_table(heading_true, heading_obs, allow_offset = True):
     params = best_fit[0]
 
     return f, std_degs, params
-
-
-def _apply_heading_correction(self, heading_true, heading_obs, 
-            allow_offset = True, plot_fit = True, auto_accept = False):
-    '''
-    '''
-
-    f, std_degs, params = fit_lookup_table(heading_true, heading_obs, 
-            allow_offset = allow_offset)
-    
-    if plot_fit:
-
-        degdiff = heading_true - heading_obs
-        degdiff[degdiff>180] -= 360
-        degdiff[degdiff<-180] += 360
-
-        fig, ax = plt.subplots(figsize = (6, 3))
-        ax.plot(heading_obs, degdiff, 'o', label = 'Table')
-        xdeg = np.arange(0, 361)
-        ax.plot(xdeg, f(xdeg), '-', label = 'Fit')
-        plt.legend()
-        plt.show()
-
-    if auto_accept:
-        accept = 'y'
-    if not auto_accept:
-        print('Fit parameters [amplitude  phase  (offset)]: ', params)
-        print('Std of fit: %.1f degrees.'%std_degs)
-        accept = input('Accept and apply heading correction? (y/n): ')
-    
-    if accept == 'y':
-        heading_orig = self.heading
-        heading_correction = f(heading_orig)
-        heading_new = heading_orig + heading_correction
-        heading_new[heading_new>360] -= 360
-        heading_new[heading_new<0] += 360
-        self.heading = heading_new
-
-        direction_new =  self.direction + heading_correction
-        direction_new[direction_new>360] -= 360
-        direction_new[direction_new<0] += 360
-        self.direction = direction_new
-
-        self._rotate_uv(-heading_correction, write_to_proc_dict=False)
-        self._record_proc_step('heading_corr', 
-            (params, std_degs, heading_correction.mean()))
-
 

@@ -72,6 +72,10 @@ ncattrs_global = {
     'project': None, # Project(s), use comma if multiple
     'acknowledgements': None, # Good place to acknowledge funding etc.
 
+    # Information about contributers to the dataset
+    'contributor_name': None,
+    'contributor_role': None,
+
     # Information about the publisher of the dataset
     'publisher_email': None,
     'publisher_url': None,
@@ -98,7 +102,7 @@ ncattrs_global = {
     'data_assembly_center': None,
     'featureType': 'timeSeriesProfile',
     'iso_topic_category': 'oceans',
-    'keywords': ('EARTH SCIENCE>OCEANS>OCEAN CIRCULATION>OCEAN CURRENTS,'
+    'keywords': ('EARTH SCIENCE>OCEANS>OCEAN CIRCULATION>OCEAN CURRENTS',
                   'EARTH SCIENCE>OCEANS>OCEAN PRESSURE>WATER PRESSURE'),
     'keywords_vocabulary': 'NASA/GCMD Science Keywords 9.1.5',
     'license': 'CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)',

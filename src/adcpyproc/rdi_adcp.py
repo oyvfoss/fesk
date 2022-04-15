@@ -59,11 +59,15 @@ plt.ion()
 
 class RdiObj:
 
-    def __init__(self, matfile):
+    def __init__(self, matfile, orientation = 'auto'):
         '''
         Load matfile (typically processed from binary file using
         WinADCP) and transfer variables to RdiObject with conventions
         (see _rdi_defs.py).
+
+        If 'orientation' is 'auto', we assume an instrument orientation 
+        as specified in the file. Can be overridden by setting orientation
+        as 'up' or 'down'
 
         Convention: Depth decreases with increasing 0th index.
 
@@ -82,7 +86,7 @@ class RdiObj:
              method_module.__dict__.items() if callable(f)]
 
         # Setup the object, populating various fields
-        self._setup(matfile)
+        self._setup(matfile, orientation=orientation)
 
 
     #######################################################################
@@ -225,6 +229,8 @@ class RdiObj:
                     'Current range (%i, %i).' % (ind0, ind1)
                     + ' Accept? (y/n): ')
                 print(accept_range_yn)
+            else:
+                accept_range_yn = 'y'
             if accept_range_yn == 'y':
                 accept_range = True
             else:

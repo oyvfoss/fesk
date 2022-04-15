@@ -51,37 +51,55 @@ def _load_data_from_matfile(self, mfile, vardict, explicit = False):
         except AttributeError:
             pass
 
+    # Heading and direction angles: set to [0, 360]
+    self.heading[self.heading>360] -= 360
+    self.heading[self.heading<0] += 360
+    self.direction[self.direction>360] -= 360
+    self.direction[self.direction<0] += 360
+
+
 #######################################################################
 
 
-def _get_orientation(self):
+def _get_orientation(self, orientation = 'auto'):
     '''
     Determines whether the instrument is up- or downlooking
     (based on the median value of the ori_ud field).
 
     Rejects profiles where *ori_ud* does not match the determined
     orientation.
+
+    If 'orientation' is 'auto', we assume an instrument orientation 
+    as specified in the file. Can be overridden by setting orientation
+    as 'up' or 'down'
     '''
 
-    mval_ud = np.round(np.ma.median(self.ori_ud))
-    if mval_ud == 1:
-        self._ori = 'up'
-        not_ud = 'down'
+    if orientation != 'auto':
+        if orientation not in ['up', 'down']:
+            raise Exception('"orientation" must be '
+            '"up", "down", or "auto".')
+        else:
+            self._ori = orientation
     else:
-        self._ori = 'down'
-        not_ud = 'up'
+        mval_ud = np.round(np.ma.median(self.ori_ud))
+        if mval_ud == 1:
+            self._ori = 'up'
+            not_ud = 'down'
+        else:
+            self._ori = 'down'
+            not_ud = 'up'
 
-    wrong_way = self.ori_ud != mval_ud
-    
-    if wrong_way.any():
-        val_tuple = self._remove_cols(np.where(wrong_way)[0], 
-            write_to_proc_dict=False, 
-            return_val_tuple=True)
-        print('Removed %i profiles where the ori_ud field\n'
-                ' indicates that the instrument was facing %sward.'
-                %(val_tuple[0], not_ud))
-        self._record_proc_step('colrem_wrongway', (val_tuple[0], 
-            not_ud, *val_tuple[1:]))
+        wrong_way = self.ori_ud != mval_ud
+        
+        if wrong_way.any():
+            val_tuple = self._remove_cols(np.where(wrong_way)[0], 
+                write_to_proc_dict=False, 
+                return_val_tuple=True)
+            print('Removed %i profiles where the ori_ud field\n'
+                    ' indicates that the instrument was facing %sward.'
+                    %(val_tuple[0], not_ud))
+            self._record_proc_step('colrem_wrongway', (val_tuple[0], 
+                not_ud, *val_tuple[1:]))
 
 #######################################################################
 
@@ -92,11 +110,14 @@ def _calculate_bin_depths(self, mfile):
     in meters.
 
     Ref https://www.bodc.ac.uk/data/documents/series/1014447/
+
+
     """
+
 
     if self._ori == 'up':
         sign = -1
-    elif self_ori == 'down':
+    elif self._ori == 'down':
         sign = +1
 
     self.dep = (self.tdepth[np.newaxis, :]
