@@ -39,17 +39,14 @@ Dependencies
 and has currently only been tested on 3.8).
 
 Beyond standard Python libraries such as *numpy*, *scipy*, *matplotlib*, etc, 
-*adcpyproc* depends on 
-- `pickle <https://docs.python.org/3/library/pickle.html>`_ (for saving python
-  dictionaries).
-- `geomag <https://pypi.org/project/geomag/>`_ (for computing time-and
-  location-dependent magnetic declination based on the World Magnetic Model for
-  compass corrections).  
-  - **Note**: *This dependency should be removed. Clunky application, and not ideal to rely on this*
-    * small and poorly maintained package. In the future: Let the user supply magnetic declination*
-    * (easily obtained from online calulators etc.)*   
-- `netCDF4 <https://unidata.github.io/netcdf4-python/>`_ for exporting to
-   netCDF.
+*adcpyproc* depends on:
+
+- `pickle <https://docs.python.org/3/library/pickle.html>`_ (for saving python dictionaries).
+- `geomag <https://pypi.org/project/geomag/>`_ (for computing time-and location-dependent magnetic declination based on the World Magnetic Model forcompass corrections).  
+ 
+  - **Note**: *This dependency should be removed. Clunky application, and not ideal to rely on this small and poorly maintained package. In the future: Let the user supply magnetic declination* (easily obtained from WMM online calulators etc.)  
+
+- `netCDF4 <https://unidata.github.io/netcdf4-python/>`_ for exporting to netCDF.
  
 To process raw *.000* files output from RDI ADCPs, you need to use RDI's WinADCP
 software.
