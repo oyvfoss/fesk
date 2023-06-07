@@ -183,7 +183,7 @@ _proc_str_dict_rdi = {
     'heading_corr' : (' - Applied heading-dependent correction to compass heading and '
                 'current vector angle.\n   Sinusiodal correction parameters:\n   '
                 '[amplitude  phase  (offset)]  )   %s.\n   STD of sinusoidal fit: '
-                '%.1f  degrees.\n   Average heading correction: %.1f degrees.'),
+                '%.1f  degrees.\n   Average heading correction: %.2f degrees.'),
     'shape_final' : ('\nFinal dataset shape: (Bins = %i, Profiles '
         '= %i) -> %i data points.'),
     'mask_final' : 'Final masked entries: %i (%.2f %% of total).',

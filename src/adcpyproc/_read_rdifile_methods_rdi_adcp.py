@@ -51,6 +51,11 @@ def _load_data_from_matfile(self, mfile, vardict, explicit = False):
         except AttributeError:
             pass
 
+    # Calculate speed
+    self.speed = np.sqrt(self.u**2 + self.v**2)
+    self.var_desc['speed'] = 'Horizontal current speed'
+    self.units['speed'] = 'cm/s'
+
     # Heading and direction angles: set to [0, 360]
     self.heading[self.heading>360] -= 360
     self.heading[self.heading<0] += 360

@@ -388,17 +388,16 @@ def apply_heading_correction(self, heading_true, heading_obs,
         degdiff[degdiff>180] -= 360
         degdiff[degdiff<-180] += 360
 
-        fig, ax = plt.subplots(figsize = (6, 3))
+        fig, ax = plt.subplots(figsize = [5.1, 2.3])
         ax.plot(heading_obs, degdiff, 'o', label = 'Table')
         xdeg = np.arange(0, 361)
         ax.plot(xdeg, f(xdeg), '-', label = 'Fit')
         ax.set_xlabel('True heading [deg]')
-        ax.set_ylabel('True heading minus instrument heading [deg]')
+        ax.set_ylabel('True heading minus\ninstrument heading [deg]')
 
         plt.legend()
         plt.tight_layout()
         plt.show()
-
 
     if auto_accept:
         accept = 'y'

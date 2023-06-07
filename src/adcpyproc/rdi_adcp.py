@@ -108,13 +108,16 @@ class RdiObj:
         floats.
         """
 
-        if not lat:
+        if lat is None:
             lat = np.float(input('Input latitude (decimal degrees): '))
-        if not lon:
+        if lon is None:
             lon = np.float(input('Input longitude (decimal degrees): '))
         self.lon, self.lat = lon, lat
 
-        self.latlon_single = not hasattr(self.lon, 'len')
+        self.latlon_single = not hasattr(self.lon, 'shape')
+        
+        self.units['lon'] = 'degrees_east'
+        self.units['lat'] = 'degrees_north'
 
         print('Set lat and lon.')
 
@@ -228,7 +231,6 @@ class RdiObj:
                 accept_range_yn = input(
                     'Current range (%i, %i).' % (ind0, ind1)
                     + ' Accept? (y/n): ')
-                print(accept_range_yn)
             else:
                 accept_range_yn = 'y'
             if accept_range_yn == 'y':
@@ -860,8 +862,8 @@ class RdiObj:
             'netcdf_formatting/netcdf_global_attributes.txt')
 
         # Make a copy of this file in the destination'
-        cp_cmd = 'cp %s %snetcdf_global_attributes.py'%(
-                ncattrfile_default, netcdf_dir)
+        cp_cmd = 'cp %s %s%s'%(
+                ncattrfile_default, netcdf_dir, attr_file)
         try:
             os.popen(cp_cmd) 
         except: 
@@ -870,21 +872,24 @@ class RdiObj:
 
         self.prepared_for_nc = True
 
-
     #######################################################################
 
 
     def to_netcdf(self, netcdf_dir, netcdf_file, 
                     attr_file='netcdf_global_attributes.py'):
         '''
-        Save to a NetCDF file (TBD).
+        Save to a NetCDF file.
         '''
 
         if hasattr(self, 'prepared_for_nc'):
             _create_netcdf(self, netcdf_dir, netcdf_file, 
                     attr_file='netcdf_global_attributes.py')
         else:
-            raise Exception('Before you can make a netCDF file, ' 
+            try:
+                _create_netcdf(self, netcdf_dir, netcdf_file, 
+                    attr_file='netcdf_global_attributes.py')
+            except:
+                raise Exception('Before you can make a netCDF file, ' 
             'you need to run *prepare_for_netcdf()* and edit the file '
             '*netcdf_global_attributes.py* with details of your dataset.')
 

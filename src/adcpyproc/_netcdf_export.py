@@ -34,6 +34,7 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
     # If we are not in the specified netcdf output location *netcdf_dir*,
     # we will change directories to move there (moving back after unless we 
     # encounter errors)
+
     initial_dir = os.getcwd()
     try:
         os.chdir(netcdf_dir)
@@ -59,7 +60,7 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
     if  os.path.isfile(netcdf_dir + netcdf_file):
         exists_continue = input('File %s%s exists. Overwrite? (y/n): '%(
             netcdf_dir, netcdf_file))
-        if exists_continue is not 'y':
+        if exists_continue != 'y':
             raise Exception('Aborting since we did not want to override.')
         else:
             print('(Deleting previous file and creating new one)')
@@ -84,31 +85,39 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
     N.setncattr('time_coverage_start', d.t_datetime[0].strftime(t_fmt_nc))
     N.setncattr('time_coverage_end', d.t_datetime[-1].strftime(t_fmt_nc))
 
+    varkeys = ['u', 'v', 'dep']
+
     # Lon / lat
     if d.latlon_single:
         ll_dim = ()
+        N.createVariable('LATITUDE', 'f4', ll_dim)
+        N.createVariable('LONGITUDE', 'f4', ll_dim)
+        N['LATITUDE'][:] = d.lat
+        N['LONGITUDE'][:] = d.lon
     else:
-        ll_dim = ('time',)
-    N.createVariable('LATITUDE', 'f4', ll_dim)
-    N.createVariable('LONGITUDE', 'f4', ll_dim)
-    N['LATITUDE'][:] = d.lat
-    N['LONGITUDE'][:] = d.lat
+        ll_dim = ('TIME',)
+        varkeys = varkeys + ['lon', 'lat']
 
-    # Data (u, v, depth)
+    # Data (u, v, depth (lat/lon))
     for varnm_ in _ncattrs_vars.keys():
         vdict_ = _ncattrs_vars[varnm_]
-        N.createVariable(varnm_,
+        ncname_ = _ncattrs_vars[varnm_]['ncname']
+        N.createVariable(ncname_,
             getattr(d, varnm_).dtype, ('nDEPTH', 'TIME'),
             fill_value=fill_value)
 
-        N[varnm_][:] = getattr(d, varnm_)
-        N[varnm_].setncattr('valid_max', N[varnm_][:].max())
-        N[varnm_].setncattr('valid_min', N[varnm_][:].min())
-        N[varnm_].setncattr('units', getattr(d, 'units')[varnm_])
-
+        N[ncname_][:] = getattr(d, varnm_)
+        N[ncname_].setncattr('valid_max', N[ncname_][:].max())
+        N[ncname_].setncattr('valid_min', N[ncname_][:].min())
+        N[ncname_].setncattr('units', getattr(d, 'units')[varnm_])
+  
         # Variable attributes
         for var_attr in vdict_['attrs'].keys():
-            N[varnm_].setncattr(var_attr, vdict_['attrs'][var_attr])
+            N[ncname_].setncattr(var_attr, vdict_['attrs'][var_attr])
+
+    N['LONGITUDE'].setncattr('units', 'degrees_east')
+    N['LATITUDE'].setncattr('units', 'degrees_north')
+
 
     # Global attributes (created based on the data)
     date_now = datetime.datetime.now().strftime(t_fmt_nc)
@@ -127,7 +136,7 @@ def _create_netcdf(d, netcdf_dir, netcdf_file,
 
     N.setncattr('geospatial_vertical_min', np.round(d.dep.min(), 2))
     N.setncattr('geospatial_vertical_max', np.round(d.dep.max(), 2))
-    N.setncattr('geospatial_vertical_resolution', d.bin_size)
+    N.setncattr('geospatial_vertical_resolution', np.round(d.bin_size, 2))
 
     N.setncattr('time_coverage_duration', time_diff_to_isofmt(
         d.t_mpl[0], d.t_mpl[-1]))

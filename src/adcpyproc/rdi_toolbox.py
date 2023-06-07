@@ -175,19 +175,17 @@ def plot_ellipse(d, dep0 = None, dep1 = None, lp_days = 5, ax = None,
                 mode = 'valid')[::wlen]
 
     # Demeaned
-    u = u_ - u_.mean()  
-    v = v_ - v_.mean()
 
-    thp, majax, minax = _uv_angle(u, v)
+    thp, majax, minax = _uv_angle(u_ - u_.mean() ,  v_ - v_.mean())
 
     if ax == None:
         fig, ax = plt.subplots(figsize = (10, 10))
 
     ax.set_aspect('equal')
 
-    ax.plot(u, v, '.', ms = 1, color = 'Grey', alpha = 0.3, lw = 2,
+    ax.plot(u_, v_, '.', ms = 1, color = 'Grey', alpha = 0.3, lw = 2,
             zorder = 0)
-    ax.plot(u[-1], v[-1], marker= 'o',color = 'k', alpha =0.5,
+    ax.plot(u_[-1], v_[-1], '.', ms= 1,color = 'k', alpha =0.5,
             lw = 2, label ='Full')
 
     ax.plot(ULP, VLP, '.', ms = 3, color = 'b', alpha = 0.5)
@@ -200,8 +198,8 @@ def plot_ellipse(d, dep0 = None, dep1 = None, lp_days = 5, ax = None,
                         minax*np.sin(thp+np.pi/2)])
     umin = np.array([-minax*np.cos(thp+np.pi/2),
                         minax*np.cos(thp+np.pi/2)])
-    ax.plot(umaj , vmaj, '-k', lw = 2, label ='Maj axis')
-    ax.plot(umin , vmin, '--k', lw = 2, label ='Min axis')
+    ax.plot(UM + umaj , VM + vmaj, '-k', lw = 2, label ='Maj axis')
+    ax.plot(UM + umin , VM + vmin, '--k', lw = 2, label ='Min axis')
 
     ax.quiver(0, 0, UM, VM, 
         color = 'r', scale_units = 'xy', scale = 1, width = 0.03, 
@@ -229,7 +227,7 @@ def hist(d, varnm, nbins = 50, line = None, return_ax = False):
         Simple histogram + histograms by depth
     
     d: RdiObj
-    varnm: Short variable name ('u', 'amp1', 'tilt'..)
+    varnm: Short variable name ('u', 'amp1', 'tilt'..).
     nbins: Number of bins to use for histogram
     line: Plot a vertical line here. Useful for looking at 
           thresholds.
@@ -292,7 +290,7 @@ def _runmean_uv(d, wlen, subsamp=1):
 
     for nn in np.arange(d.Ndep):
         for key in ['u', 'v']:
-            var = getattr(d, key)[nn]
+            var = getattr(d, key)[nn].copy()
             var[var.mask] = np.nan
             VAR_ = np.convolve(var, 
                 np.ones(wlen)/wlen, mode = 'valid')
@@ -369,7 +367,7 @@ def _histogram_param_1d(d, varnm, ax, nbins = 50):
     VAR_ = getattr(d, varnm) 
     umask = d.u.mask
     
-    # Not including invalid entries - give grazy values..
+    # Not including invalid entries - give crazy values..
     if varnm in ['u', 'v', 'w', 'errvel']:
         umask = umask[np.abs(VAR_.data) < 1000]
         VAR_ = VAR_[np.abs(VAR_.data) < 1000]
@@ -381,8 +379,8 @@ def _histogram_param_1d(d, varnm, ax, nbins = 50):
         VAR_val = VAR_[~umask]
 
     N_all = len(VAR_all)
-    col_1 = (1.0, 0.4980392156862745, 0.054901960784313725)
-    col_2 = (0.12156862745098039, 0.4666666666666667, 0.7058823529411765)
+    col_1 = (1.0, 0.498, 0.055)
+    col_2 = (0.122, 0.467, 0.705)
 
     # Histogram, all entries
     Hargs = {'density': False, }
@@ -390,7 +388,7 @@ def _histogram_param_1d(d, varnm, ax, nbins = 50):
     Hargs['bins']= H_bins
     H_width = np.ma.median(np.diff(H_bins))
 
-       # Bar plot
+    # Bar plot
     ax.bar(H_bins[:-1], 100*H_all/N_all, width = H_width, align = 'edge', 
             alpha = 0.4, color = col_1, label = 'All')
     

@@ -45,11 +45,18 @@ Beyond standard Python libraries such as *numpy*, *scipy*, *matplotlib*, etc,
 - `geomag <https://pypi.org/project/geomag/>`_ (for computing time-and
   location-dependent magnetic declination based on the World Magnetic Model for
   compass corrections).  
+  - **Note**: *This dependency should be removed. Clunky application, and not ideal to rely on this*
+    * small and poorly maintained package. In the future: Let the user supply magnetic declination*
+    * (easily obtained from online calulators etc.)*   
 - `netCDF4 <https://unidata.github.io/netcdf4-python/>`_ for exporting to
    netCDF.
  
 To process raw *.000* files output from RDI ADCPs, you need to use RDI's WinADCP
 software.
+
+
+- **Note**: It would probably be a good idea to change the base of the sorftware from 
+  numpy arrays to xarray Datasets, as in the *SigPyProc* module.
 
 Installing
 ----------

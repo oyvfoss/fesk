@@ -107,7 +107,7 @@ def declination(dlat, dlon, time, h=0, model=None, explicit=True):
                 raise Exception('magdec calculation: lat/lon must be constant' 
                                 'or have the same shape as t!')
 
-            for time_, dlon_, dlat_ in zip(time_dates, dlon, dlat):
+            for nn, (time_, dlon_, dlat_) in enumerate(zip(time_dates, dlon, dlat)):
                 magdec_ = __singleton__.GeoMag(dlat_, dlon_, h, time_).dec
                 magdec = np.append(magdec, magdec_)
                 if explicit:

@@ -102,7 +102,7 @@ ncattrs_global = {
     'data_assembly_center': None,
     'featureType': 'timeSeriesProfile',
     'iso_topic_category': 'oceans',
-    'keywords': ('EARTH SCIENCE>OCEANS>OCEAN CIRCULATION>OCEAN CURRENTS',
+    'keywords': ('EARTH SCIENCE>OCEANS>OCEAN CIRCULATION>OCEAN CURRENTS,'
                   'EARTH SCIENCE>OCEANS>OCEAN PRESSURE>WATER PRESSURE'),
     'keywords_vocabulary': 'NASA/GCMD Science Keywords 9.1.5',
     'license': 'CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)',
