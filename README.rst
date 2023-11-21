@@ -1,5 +1,4 @@
-ADCPyProc
-#########
+# `ADCPyProc`
 
 Version 0.0.1: *Under development. Locally working code. Not extensively 
 tested or QCed.* 
