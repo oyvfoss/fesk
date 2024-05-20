@@ -20,8 +20,8 @@ Want to keep external dependencies to a minimum, though..
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.dates import num2date
-from adcpyproc.misc_functions import closest
-from adcpyproc import _rdi_defs
+from fesk.misc_functions import closest
+from fesk import _rdi_defs
 
 
 ### PLOTTING

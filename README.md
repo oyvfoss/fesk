@@ -1,11 +1,9 @@
-``ADCPyProc``
-#############
+![](graphics/fesk_banner.png)
 
 Version 0.0.1: *Under development. Locally working code. Not extensively 
 tested or QCed.* 
 
-Overview
---------
+## Overview
 
 Post-processing and basic analysis of ocean ADCP data using python.
 
@@ -15,7 +13,7 @@ files output by WinADCP).
 (At the moment: primarily functionality for processing, not much for
 analysis/inspection. Will add more of this later. )
 
-Creates a ``RdiObj`` object containing the data. This object can be easily 
+Creates a `RdiObj` object containing the data. This object can be easily 
 manipulated with associated methods for cleaning, flagging, chopping and other 
 useful post-processing operations. The processed data can then be exported to 
 a python dictionary, a matlab *.mat* file, or a netCDF file (the latter is not 
@@ -32,21 +30,21 @@ auxilliary array of masks to keep track of which values are considered valid. Up
 export to matlab or netcdf formats, invalid values are converted to NaNs.
 The "masking" and "flagging" are used somewhat interchangeably in the documentation. 
 
-Dependencies
--------------
+## Dependencies
 
-*Adcpyproc* is a Python package, and requires Python 3 (will not work on 2. 
+
+*fesk* is a Python package, and requires Python 3 (will not work on 2. 
 and has currently only been tested on 3.8).
 
 Beyond standard Python libraries such as *numpy*, *scipy*, *matplotlib*, etc, 
-*adcpyproc* depends on:
+*fesk* depends on:
 
-- `pickle <https://docs.python.org/3/library/pickle.html>`_ (for saving python dictionaries).
-- `geomag <https://pypi.org/project/geomag/>`_ (for computing time-and location-dependent magnetic declination based on the World Magnetic Model forcompass corrections).  
+- [pickle] (https://docs.python.org/3/library/pickle.html) (for saving python dictionaries).
+- [geomag] (https://pypi.org/project/geomag/) (for computing time-and location-dependent magnetic declination based on the World Magnetic Model forcompass corrections).  
  
   - **Note**: *This dependency should be removed. Clunky application, and not ideal to rely on this small and poorly maintained package. In the future: Let the user supply magnetic declination* (easily obtained from WMM online calulators etc.)  
 
-- `netCDF4 <https://unidata.github.io/netcdf4-python/>`_ for exporting to netCDF.
+- [netCDF4](https://unidata.github.io/netcdf4-python/) for exporting to netCDF.
  
 To process raw *.000* files output from RDI ADCPs, you need to use RDI's WinADCP
 software.
@@ -55,29 +53,27 @@ software.
 - **Note**: It would probably be a good idea to change the base of the sorftware from 
   numpy arrays to xarray Datasets, as in the *SigPyProc* module.
 
-Installing
-----------
+## Installing
+
 
 To install, you should be able to do something like this:
 
-1. Obtain a copy of *adcpyproc*. Either: 
+1. Obtain a copy of *fesk*. Either: 
     - Clone the git repository into a suitable location.
     - Download the zip file and unpack into a suitable folder.
 
 2. Navigate to the top folder of the pproject (the one containing ``setup.py`` ).
 3. If you haven't already: Install *pip*. For conda systems: ``conda install pip``.
-4. Install *adcpyproc* using ``pip install -e .``.
+4. Install *fesk* using ``pip install -e .``.
     - The ``-e`` flag should be used while the code is still in the initial
       development phase.
 5. You should now be able to load the module using, e.g.:
-    - ``import adcpyproc``
-    - ``from adcpyproc import rdi_adcp``
+    - ``import fesk``
+    - ``from fesk import rdi_adcp``
 
-Example usage
--------------
+## Example usage
 
-Minimal example
-+++++++++++++++
+#### Minimal example
 
 An example of processing steps which may be considered a minimum for ADCP
 processing.
@@ -85,8 +81,8 @@ processing.
 
 ::
 
-    # Import adcpyproc
-    from adcpyproc import rdi_adcp
+    # Import fesk
+    from fesk import rdi_adcp
 
     # Set the path to the .mat file output from WinADCP
     fn_mat = 'path/to/matfile/file_from_winadcp.mat'
@@ -123,14 +119,14 @@ processing.
     d.to_matfile('test_fn.mat', sparse = True)       
 
 
-Extended example
-+++++++++++++++++
+#### Extended example
+
 
 
 ::
 
-    # Import adcpyproc
-    from adcpyproc import rdi_adcp
+    # Import fesk
+    from fesk import rdi_adcp
 
     # Set the path to the .mat file output from WinADCP
     fn_mat = 'path/to/matfile/file_from_winadcp.mat'

@@ -17,7 +17,7 @@ except ModuleNotFoundError:
     raise Warning("Couldn't load module *geomag* -> won't be "
           "able to apply magnetic declination correction.")
 
-from adcpyproc import __file__ as _initloc
+from fesk import __file__ as _initloc
 
 # Get the path of the folder containing the .COF file (a little hacky..)
 cofdir = _initloc.replace('__init__.py', 'WMM_COF_files/')

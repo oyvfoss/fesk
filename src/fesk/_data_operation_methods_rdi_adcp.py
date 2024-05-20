@@ -4,8 +4,8 @@ import numpy as np
 import scipy.io
 import datetime as dt
 from collections import OrderedDict
-from adcpyproc import _rdi_defs
-from adcpyproc import _heading_correction
+from fesk import _rdi_defs
+from fesk import _heading_correction
 import matplotlib.pyplot as plt
 
 #######################################################################

@@ -3,7 +3,7 @@ import netCDF4
 import numpy as np
 import os
 import datetime
-from adcpyproc.netcdf_formatting._ncattrs_variables import _ncattrs_variables as _ncattrs_vars
+from fesk.netcdf_formatting._ncattrs_variables import _ncattrs_variables as _ncattrs_vars
 
 
 def time_diff_to_isofmt(t0, t1):

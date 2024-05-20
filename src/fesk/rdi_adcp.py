@@ -32,18 +32,18 @@ import warnings
 import os
 
 # Internal libraries
-from adcpyproc.misc_functions import declination, t_python_to_mat
+from fesk.misc_functions import declination, t_python_to_mat
 # Dictionaries, long strings, warming messages etc
-from adcpyproc import _rdi_defs
+from fesk import _rdi_defs
 
 # Imported internal methods for the RdiObj class
 # (We put most internal class methods in these external modules and reserve
 # the present module for user relevant functions)
-from adcpyproc import _read_rdifile_methods_rdi_adcp
-from adcpyproc import _data_operation_methods_rdi_adcp
-from adcpyproc._netcdf_export import _create_netcdf
-from adcpyproc import __file__ as _initloc
-from adcpyproc import rdi_toolbox
+from fesk import _read_rdifile_methods_rdi_adcp
+from fesk import _data_operation_methods_rdi_adcp
+from fesk._netcdf_export import _create_netcdf
+from fesk import __file__ as _initloc
+from fesk import rdi_toolbox
 
 
 # Enable interactive mode for pyplot

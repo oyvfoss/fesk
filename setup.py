@@ -4,7 +4,7 @@ with open('README.rst', 'r') as f_readme:
     long_description = f_readme.read()
 
 setup(
-    name='adcpyproc',
+    name='fesk',
     version='0.0.1',
     description=('Post-processing and basic analysis of ocean ADCP'
                  ' data using python.'),
